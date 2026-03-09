@@ -196,7 +196,7 @@ To avoid conflicts between projects:
 | Project | Backend | Frontend |
 |---------|---------|----------|
 | instaclub | 8080 | 8941 |
-| ls-kiteui-starter | 8081 | 8941 |
+| composable-2dos | 8081 | 8941 |
 | project-c | 8082 | 8942 |
 | project-d | 8083 | 8943 |
 

@@ -45,9 +45,9 @@ importScripts("https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-m
 firebase.initializeApp({
     // TODO: Replace with your app's Firebase project configuration.'
     apiKey: "AIzaSyCL8CNiVYE-JoF3JxJffpgHjHV8wfMdqTY",
-    authDomain: "ls-kiteui-starter-project.firebaseapp.com",
-    projectId: "ls-kiteui-starter-project",
-    storageBucket: "ls-kiteui-starter-project.firebasestorage.app",
+    authDomain: "composable-2dos-project.firebaseapp.com",
+    projectId: "composable-2dos-project",
+    storageBucket: "composable-2dos-project.firebasestorage.app",
     messagingSenderId: "763812266707",
     appId: "1:763812266707:web:3ee91ef35b45b8e70c0a26"
 });

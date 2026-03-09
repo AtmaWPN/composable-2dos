@@ -14,7 +14,7 @@ plugins {
     alias(libs.plugins.kfc)
 }
 
-group = "com.lightningkite.lskiteuistarter"
+group = "com.atmaweapon.composable2dos"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -101,11 +101,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.lightningkite.lskiteuistarter"
+    namespace = "com.atmaweapon.composable2dos"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.lightningkite.lskiteuistarter"
+        applicationId = "com.atmaweapon.composable2dos"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -158,7 +158,7 @@ rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlu
 }
 
 configure<KiteUiPluginExtension> {
-    this.packageName = "com.lightningkite.lskiteuistarter"
+    this.packageName = "com.atmaweapon.composable2dos"
     this.iosProjectRoot = project.file("./ios/app")
 }
 

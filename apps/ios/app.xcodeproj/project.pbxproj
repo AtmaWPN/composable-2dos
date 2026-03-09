@@ -616,10 +616,10 @@
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = I386;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = app/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "ls-kiteui-starter";
-				INFOPLIST_KEY_NSCalendarsUsageDescription = "ls-kiteui-starter doesn't use your calendar, but uses a library that can provide calendar access.";
+				INFOPLIST_KEY_CFBundleDisplayName = "composable-2dos";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "composable-2dos doesn't use your calendar, but uses a library that can provide calendar access.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires camera access in order for you to add photos, and videos to a image collection.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "ls-kiteui-starter uses your Camera Roll to upload, share, download, and save the photos that you select.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "composable-2dos uses your Camera Roll to upload, share, download, and save the photos that you select.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -638,7 +638,7 @@
 					"\"apps\"",
 					"-ObjC",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.lightningkite.lskiteuistarter;
+				PRODUCT_BUNDLE_IDENTIFIER = com.atmaweapon.composable2dos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -660,10 +660,10 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = app/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "ls-kiteui-starter";
-				INFOPLIST_KEY_NSCalendarsUsageDescription = "ls-kiteui-starter doesn't use your calendar, but uses a library that can provide calendar access.";
+				INFOPLIST_KEY_CFBundleDisplayName = "composable-2dos";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "composable-2dos doesn't use your calendar, but uses a library that can provide calendar access.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires camera access in order for you to add photos, and videos to a image collection.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "ls-kiteui-starter uses your Camera Roll to upload, share, download, and save the photos that you select.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "composable-2dos uses your Camera Roll to upload, share, download, and save the photos that you select.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -682,7 +682,7 @@
 					"\"apps\"",
 					"-ObjC",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.lightningkite.lskiteuistarter;
+				PRODUCT_BUNDLE_IDENTIFIER = com.atmaweapon.composable2dos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;

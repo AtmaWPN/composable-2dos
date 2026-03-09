@@ -18,7 +18,7 @@ terraform {
 terraform {
   backend "s3" {
     bucket = "lightningkite-terraform"
-    key = "lskiteuistarter/frontend"
+    key = "composable2dos/frontend"
     region = "us-west-2"
   }
 }
@@ -37,9 +37,9 @@ module "web" {
     aws = aws
     aws.acm = aws.acm
   }
-  deployment_name  = "lskiteuistarter"
+  deployment_name  = "composable2dos"
   dist_folder = "../../build/vite/dist"
-  domain_name      = "app.lskiteuistarter.cs.lightningkite.com"
+  domain_name      = "app.composable2dos.cs.lightningkite.com"
   domain_name_zone = "cs.lightningkite.com"
   react_mode = true
 }

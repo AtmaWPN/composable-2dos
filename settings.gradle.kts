@@ -1,4 +1,4 @@
-rootProject.name = "ls-kiteui-starter"
+rootProject.name = "composable-2dos"
 
 pluginManagement {
     repositories {

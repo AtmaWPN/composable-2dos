@@ -19,7 +19,7 @@ buildscript {
 }
 
 allprojects {
-    group = "com.lightningkite.lskiteuistarter"
+    group = "com.atmaweapon.composable2dos"
     repositories {
         mavenLocal()
         maven("https://lightningkite-maven.s3.us-west-2.amazonaws.com")

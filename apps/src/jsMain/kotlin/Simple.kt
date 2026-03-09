@@ -1,4 +1,4 @@
-package com.lightningkite.lskiteuistarter
+package com.atmaweapon.composable2dos
 
 import com.lightningkite.kiteui.*
 import com.lightningkite.kiteui.models.ThemeDerivation
