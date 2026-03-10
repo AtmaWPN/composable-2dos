@@ -89,6 +89,7 @@ class HomePage : Page {
                                             createdAt = now()
                                         ))
                                     }
+                                    closeThisPopover()
                                 } }
                             }
                         }
@@ -96,7 +97,7 @@ class HomePage : Page {
                 } } }
             }
 
-            important.buttonTheme.button {
+            danger.button {
                 centered.text("Logout")
                 onClick {
                     try {
