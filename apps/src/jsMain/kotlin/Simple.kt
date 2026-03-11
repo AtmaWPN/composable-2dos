@@ -23,7 +23,7 @@ import org.w3c.dom.events.KeyboardEvent
 import org.w3c.files.BlobPropertyBag
 
 fun main() {
-    root(appTheme.value) {
+    root(appTheme) {
         app(PageNavigator { AutoRoutes }, PageNavigator { AutoRoutes })
     }
 }

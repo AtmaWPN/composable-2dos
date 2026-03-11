@@ -96,20 +96,6 @@ class HomePage : Page {
                     }
                 } } }
             }
-
-            danger.button {
-                centered.text("Logout")
-                onClick {
-                    try {
-                        currentSession()?.api?.userAuth?.terminateSession()
-                    } catch (e: Exception) {
-
-                    } finally {
-                        sessionToken set null
-                        pageNavigator.reset(LoginPage())
-                    }
-                }
-            }
         }
     }
 }
