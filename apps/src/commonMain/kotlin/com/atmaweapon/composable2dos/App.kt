@@ -57,7 +57,7 @@ fun ViewWriter.appNavBottomTabsIconOnly(setup: AppNav.() -> Unit): Unit {
                     ::visible { pageNavigator.canGoBack() }
                     onClick { pageNavigator.goBack() }
                 }
-                centered.onNext(HeaderSemantic).centered.expanding.text {
+                centered.themed(HeaderSemantic).centered.expanding.text {
                     ::content.invoke { pageNavigator.currentPage()?.title?.let { it() } ?: "" }
                     wraps = false; ellipsis = true
                 }
