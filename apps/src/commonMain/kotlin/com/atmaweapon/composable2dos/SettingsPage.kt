@@ -47,6 +47,7 @@ class SettingsPage : Page {
                     }
                 }
             }
+            expanding.space()
             danger.button {
                 centered.text("Logout")
                 onClick {

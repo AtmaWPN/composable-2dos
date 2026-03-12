@@ -86,6 +86,8 @@ fun ViewWriter.appNavBottomTabsIconOnly(setup: AppNav.() -> Unit): Unit {
             applySafeInsets(top = false, bottom = false)
         }.expanding.navigatorView(pageNavigator)
         bar.row {
+            padding = 0.px
+            gap = 0.px
             applySafeInsets(top = false)
             showOnPrint = false
             ::shown { appNav.existsProperty() && !AppState.softInputOpen() }
@@ -93,6 +95,7 @@ fun ViewWriter.appNavBottomTabsIconOnly(setup: AppNav.() -> Unit): Unit {
             forEach(appNav.navItemsProperty) { navElement ->
                 when (navElement) {
                     is NavLink -> expanding.link {
+                        gap = 0.px
                         dynamicTheme {
                             val current = mainPageNavigator.currentPage()?.let { mainPageNavigator.routes.render(it) }?.urlLikePath?.segments
                             val target = mainPageNavigator.routes.render(navElement.destination.invoke(this)())?.urlLikePath?.segments
