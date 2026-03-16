@@ -13,6 +13,7 @@ import com.lightningkite.kiteui.current
 import com.lightningkite.kiteui.exceptions.ExceptionToMessages
 import com.lightningkite.kiteui.exceptions.installLsError
 import com.lightningkite.kiteui.models.*
+import com.lightningkite.kiteui.models.Icon.Companion
 import com.lightningkite.kiteui.navigation.PageNavigator
 import com.lightningkite.kiteui.navigation.dialogPageNavigator
 import com.lightningkite.kiteui.navigation.mainPageNavigator
@@ -43,73 +44,36 @@ var appUpdateChecked = false
 fun ViewWriter.appNavBottomTabsIconOnly(setup: AppNav.() -> Unit): Unit {
     val appNav = AppNav.ByProperty()
     OuterSemantic.onNext.col {
-        if (Platform.probablyAppleUser) {
-            compact.bar.frame {
-                applySafeInsets(bottom = false)
-                showOnPrint = false
-                setup(appNav)
-                atStart.themed(InteractiveSemantic).button {
-                    row {
-                        gap = 0.px
-                        centered.icon(Icon.chevronLeft, "Go Back")
-                        centered.text { ::content { pageNavigator.stack().let { it.getOrNull(it.size - 2) }?.title?.let { it() }?.let { if (it.length > 15) it.take(15) + "\u2026" else it } ?: "" } }
-                    }
-                    ::visible { pageNavigator.canGoBack() }
-                    onClick { pageNavigator.goBack() }
-                }
-                centered.themed(HeaderSemantic).centered.expanding.text {
-                    ::content.invoke { pageNavigator.currentPage()?.title?.let { it() } ?: "" }
-                    wraps = false; ellipsis = true
-                }
-                atEnd.navGroupActions(appNav.actionsProperty)
-                ::shown { appNav.existsProperty() }
+        debugName = "outer nav"
+        // Nav 3 top and bottom (top)
+        bar.row {
+            applySafeInsets(bottom = false)
+            debugName = "normal app bar"
+            showOnPrint = false
+            setup(appNav)
+            if (Platform.current != Platform.Web) button {
+                icon(Icon.arrowBack, "Go Back")
+                ::visible { pageNavigator.canGoBack() }
+                onClick { pageNavigator.goBack() }
             }
-        } else {
-            bar.row {
-                applySafeInsets(bottom = false)
-                showOnPrint = false
-                setup(appNav)
-                if (Platform.current != Platform.Web) button {
-                    icon(Icon.arrowBack, "Go Back")
-                    ::visible { pageNavigator.canGoBack() }
-                    onClick { pageNavigator.goBack() }
-                }
-                HeaderSemantic.onNext.centered.expanding.text {
-                    ::content.invoke { pageNavigator.currentPage()?.title?.let { it() } ?: "" }
-                    wraps = false; ellipsis = true
-                }
-                navGroupActions(appNav.actionsProperty)
-                ::shown { appNav.existsProperty() }
+            HeaderSemantic.onNext.centered.expanding.text {
+                ::content.invoke { pageNavigator.currentPage()?.title?.let { it() } ?: "" }
+                wraps = false
+                ellipsis = true
             }
+            navGroupActions(appNav.actionsProperty)
+            ::shown { appNav.existsProperty() }
         }
         beforeNextElementSetup {
             applySafeInsets(top = false, bottom = false)
         }.expanding.navigatorView(pageNavigator)
-        bar.row {
-            padding = 0.px
-            gap = 0.px
+        //Nav 3 - top and bottom (bottom/tabs)
+        nav.navGroupTabs(appNav.navItemsProperty) {
+            padding = 0.rem
             applySafeInsets(top = false)
+            debugName = "navGroupTabs"
             showOnPrint = false
             ::shown { appNav.existsProperty() && !AppState.softInputOpen() }
-            themeChoice += ListSemantic
-            forEach(appNav.navItemsProperty) { navElement ->
-                when (navElement) {
-                    is NavLink -> expanding.link {
-                        gap = 0.px
-                        dynamicTheme {
-                            val current = mainPageNavigator.currentPage()?.let { mainPageNavigator.routes.render(it) }?.urlLikePath?.segments
-                            val target = mainPageNavigator.routes.render(navElement.destination.invoke(this)())?.urlLikePath?.segments
-                            if (current == target) SelectedSemantic else ForcePaddingSemantic
-                        }
-                        resetsStack = true
-                        shown = false
-                        ::shown { navElement.hidden?.invoke() != true }
-                        centered.navElementIconAndCount(navElement)
-                        ::to { navElement.destination() }
-                    }
-                    else -> {}
-                }
-            }
         }
     }
 }

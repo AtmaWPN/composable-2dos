@@ -10,6 +10,9 @@ fun edgyTheme(): Theme {
     return Theme(
         id = "base",
         elevation = 0.dp,
+        gap = 0.5.rem,
+        padding = Edges(0.5.rem),
+        outlineWidth = 0.px,
         cornerRadii = CornerRadii.Fixed(0.rem),
         background = Color.fromHexString("#BBBBBB"),
         foreground = Color.fromHexString("#333333"),
@@ -19,6 +22,19 @@ fun edgyTheme(): Theme {
                 it.withBack(
                     foreground = Color.fromHexString("#BBBBBB"),
                     background = Color.fromHexString("#550505"),
+                )
+            },
+            HeaderSemantic.override {
+                it.withoutBack(padding = Edges(1.rem))
+            },
+            NavSemantic.override {
+                it.withBack(
+                    foreground = Color.fromHexString("#BBBBBB"),
+                    background = Color.fromHexString("#333333"),
+                    cornerRadii = CornerRadii.AdaptiveToSpacing(0.px),
+//                    cascading = false,
+//                    padding = Edges(0.px),
+                    gap = 0.px
                 )
             },
         ),
