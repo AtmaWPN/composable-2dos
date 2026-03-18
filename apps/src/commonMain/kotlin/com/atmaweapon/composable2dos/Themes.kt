@@ -20,8 +20,10 @@ fun edgyTheme(): Theme {
             // Danger - red styling
             DangerSemantic.override {
                 it.withBack(
-                    foreground = Color.fromHexString("#BBBBBB"),
-                    background = Color.fromHexString("#550505"),
+                    background = it.background,
+                    foreground = Color.fromHexString("#640404"),
+                    outline = Color.fromHexString("#640404"),
+                    outlineWidth = 2.px,
                 )
             },
             HeaderSemantic.override {
@@ -37,6 +39,12 @@ fun edgyTheme(): Theme {
                     gap = 0.px
                 )
             },
+            CardSemantic.override {
+                it.withBack(
+                    background = it.background.darken(0.1f),
+                    cascading = true,
+                )
+            }
         ),
     )
 }

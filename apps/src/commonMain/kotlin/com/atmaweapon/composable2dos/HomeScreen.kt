@@ -13,6 +13,9 @@ import com.lightningkite.kiteui.views.l2.icon
 import com.atmaweapon.composable2dos.sdk.currentSession
 import com.atmaweapon.composable2dos.sdk.currentSessionNotNull
 import com.atmaweapon.composable2dos.sdk.sessionToken
+import com.lightningkite.kiteui.models.Edges
+import com.lightningkite.kiteui.models.dp
+import com.lightningkite.kiteui.models.rem
 import com.lightningkite.kiteui.views.l2.dialog
 import com.lightningkite.reactive.context.invoke
 import com.lightningkite.reactive.context.reactive
@@ -24,7 +27,10 @@ import com.lightningkite.services.database.Query
 import com.lightningkite.services.database.condition
 import com.lightningkite.services.database.eq
 import com.lightningkite.services.database.SortPart
+import com.lightningkite.services.database.and
+import com.lightningkite.services.database.neq
 import com.lightningkite.services.database.sort
+import kotlinx.coroutines.NonCancellable.children
 import kotlin.collections.emptyList
 import kotlin.time.Clock.System.now
 
@@ -54,17 +60,57 @@ class HomePage : Page {
                 children(
                     items = taskSets,
                     id = { it._id },
-                    render = {
-                        card.row {
-                            expanding.button {
-                                text { ::content { it().title } }
-                                ::action { Action(it().title) { pageNavigator.navigate(TaskSetDetailPage(it()._id)) } }
+                    render = { taskSet ->
+                        val previewTasks = remember {
+                            currentSession()?.let { session ->
+                                session.tasks.query(Query(
+                                    condition = condition { (it.taskSet eq taskSet()._id) and (it.completedAt eq null) },
+                                    orderBy = sort { it.createdAt.descending() },
+                                    limit = 3,
+                                ))()
+                            } ?: emptyList()
+                        }
+
+                        expanding.frame {
+                            paddingByEdge = Edges(1.rem, 0.rem, 1.rem, 0.rem)
+                            gap = 1.rem
+                            card.button {
+                                column {
+                                    row {
+                                        expanding.text { ::content { taskSet().title } }
+
+                                    }
+                                    column {
+                                        shownWhen { previewTasks().isNotEmpty() }.expanding.text {
+                                            paddingByEdge = Edges(2.rem, 0.rem, 0.rem, 0.rem)
+                                            ::content { previewTasks().getOrNull(0)?.title ?: "No Data" }
+                                        }
+                                        shownWhen { previewTasks().size >= 2 }.expanding.text {
+                                            paddingByEdge = Edges(2.rem, 0.rem, 0.rem, 0.rem)
+                                            ::content { previewTasks().getOrNull(1)?.title ?: "No Data" }
+                                        }
+                                        shownWhen { previewTasks().size >= 3 }.expanding.text {
+                                            paddingByEdge = Edges(2.rem, 0.rem, 0.rem, 0.rem)
+                                            ::content { previewTasks().getOrNull(2)?.title ?: "No Data" }
+                                        }
+                                    }
+                                }
+                                ::action {
+                                    Action(taskSet().title) {
+                                        pageNavigator.navigate(
+                                            TaskSetDetailPage(
+                                                taskSet()._id
+                                            )
+                                        )
+                                    }
+                                }
                             }
-                            button {
+                            atTopEnd.danger.button {
+                                gap = 1.rem
                                 icon(Icon.delete, "Delete task set")
                                 onClick {
                                     confirmDanger("Delete task set?", "", "Delete") {
-                                        currentSessionNotNull().taskSets[it()._id].delete()
+                                        currentSessionNotNull().taskSets[taskSet()._id].delete()
                                     }
                                 }
                             }
@@ -85,10 +131,22 @@ class HomePage : Page {
                 centered.text("Create New Task Set")
                 ::action { Action("Create New Task Set") { dialog { close ->
                     val taskSetName = mutableRemember { "" }
-                    col {
+                    val saveAction = Action("Save") {
+                        currentSession()?.let { session ->
+                            session.taskSets.add(TaskSet(
+                                title = taskSetName(),
+                                user = session.userId,
+                                createdAt = now()
+                            ))
+                        }
+                        close()
+                    }
+                    sizeConstraints(minWidth = 20.rem).col {
                         textInput {
                             content bind taskSetName
                             hint = "Title"
+                            requestFocus()
+                            action = saveAction
                         }
                         row {
                             button {
@@ -99,16 +157,7 @@ class HomePage : Page {
                             }
                             important.button {
                                 centered.text("Save")
-                                ::action { Action("Save") {
-                                    currentSession()?.let { session ->
-                                        session.taskSets.add(TaskSet(
-                                            title = taskSetName(),
-                                            user = session.userId,
-                                            createdAt = now()
-                                        ))
-                                    }
-                                    close()
-                                } }
+                                action = saveAction
                             }
                         }
                     }

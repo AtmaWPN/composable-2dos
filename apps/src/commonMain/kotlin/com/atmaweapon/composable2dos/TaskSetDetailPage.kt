@@ -39,6 +39,8 @@ import com.lightningkite.services.database.neq
 import com.lightningkite.services.database.notNull
 import com.lightningkite.services.database.or
 import com.lightningkite.services.database.SortPart
+import com.lightningkite.services.database.gte
+import com.lightningkite.services.database.lte
 import com.lightningkite.services.database.path
 import com.lightningkite.services.database.sort
 import kotlin.time.Clock.System.now
@@ -59,11 +61,17 @@ class TaskSetDetailPage(val id: Uuid) : Page {
     val tasks = remember {
         currentSessionNotNull().tasks.query(Query(
             condition {
-                (it.taskSet eq id) and ((it.completedAt eq null) or (it.completedAt.notNull gt sevenDaysAgo))
+                (it.taskSet eq id) and (it.completedAt eq null)
             },
             orderBy = sort {
-                it.completedAt.notNull.ascending() // TODO: completed tasks go at the bottom, but are sorted by completion date descending
-                it.createdAt.ascending()
+                it.createdAt.descending()
+            },
+        ))() + currentSessionNotNull().tasks.query(Query(
+            condition {
+                (it.taskSet eq id) and (it.completedAt neq null) and (it.completedAt.notNull gte sevenDaysAgo)
+            },
+            orderBy = sort {
+                it.completedAt.notNull.descending()
             },
         ))()
     }
@@ -83,7 +91,7 @@ class TaskSetDetailPage(val id: Uuid) : Page {
                     items = tasks,
                     id = { it._id },
                     render = {
-                        card.row {
+                        row {
                             val completed = mutableRemember {
                                 it().completedAt != null
                             }
@@ -103,14 +111,14 @@ class TaskSetDetailPage(val id: Uuid) : Page {
                                 }
                             }
 
-                            shownWhen { completed() }.expanding.centeredVertically.strikethrough.text {
+                            centeredVertically.shownWhen { completed() }.expanding.strikethrough.text {
                                 ::content { it().title }
                             }
-                            shownWhen { !completed() }.expanding.centeredVertically.text {
+                            centeredVertically.shownWhen { !completed() }.expanding.text {
                                 ::content { it().title }
                             }
                             expanding.space()
-                            button {
+                            danger.button {
                                 icon(Icon.delete, "Delete task")
                                 onClick {
                                     confirmDanger("Confirm Deletion?", "", "Delete") {
@@ -129,10 +137,24 @@ class TaskSetDetailPage(val id: Uuid) : Page {
                     Action("Create New Task") {
                         dialog { close ->
                             val taskName = mutableRemember { "" }
-                            col {
+                            val saveAction = Action("Save") {
+                                val session = currentSessionNotNull()
+                                session.tasks.add(
+                                    Task(
+                                        title = taskName(),
+                                        user = session.userId,
+                                        taskSet = id,
+                                        createdAt = now()
+                                    )
+                                )
+                                close()
+                            }
+                            sizeConstraints(minWidth = 20.rem).col {
                                 textInput {
                                     content bind taskName
                                     hint = "Task title"
+                                    requestFocus()
+                                    action = saveAction
                                 }
                                 row {
                                     button {
@@ -141,20 +163,7 @@ class TaskSetDetailPage(val id: Uuid) : Page {
                                     }
                                     important.button {
                                         centered.text("Save")
-                                        ::action {
-                                            Action("Save") {
-                                                val session = currentSessionNotNull()
-                                                session.tasks.add(
-                                                    Task(
-                                                        title = taskName(),
-                                                        user = session.userId,
-                                                        taskSet = id,
-                                                        createdAt = now()
-                                                    )
-                                                )
-                                                close()
-                                            }
-                                        }
+                                        action = saveAction
                                     }
                                 }
                             }
