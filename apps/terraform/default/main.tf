@@ -17,7 +17,7 @@ terraform {
 }
 terraform {
   backend "s3" {
-    bucket = "lightningkite-terraform"
+    bucket = "theatmaweapon-terraform"
     key = "composable2dos/frontend"
     region = "us-west-2"
   }
@@ -38,9 +38,9 @@ module "web" {
     aws.acm = aws.acm
   }
   deployment_name  = "composable2dos"
-  dist_folder = "../../build/vite/dist"
-  domain_name      = "app.composable2dos.cs.lightningkite.com"
-  domain_name_zone = "cs.lightningkite.com"
+  dist_folder = "../../build/dist/js/production"
+  domain_name      = "app.composable2dos.atmaweapon.net"
+  domain_name_zone = "atmaweapon.net"
   react_mode = true
 }
 

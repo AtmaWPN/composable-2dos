@@ -8,7 +8,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @Serializable
 enum class ApiOption(val apiName: String, val http: String, val ws: String) {
-    //    Production(" ", "https://", "wss://"),
+    Production("Production", "https://api.composable2dos.atmaweapon.net", "wss://ws.api.composable2dos.atmaweapon.net"),
 //    Staging("Staging", "https://", "wss://"),
 //    Dev("Dev", "https://", "wss://"),
     SameServer("Same Server", "/api", "/api"),

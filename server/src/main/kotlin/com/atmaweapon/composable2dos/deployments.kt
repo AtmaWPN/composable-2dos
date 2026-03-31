@@ -30,20 +30,20 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 
 
-object LkEnv : TerraformAwsServerlessDomainBuilder<Server>(Server) {
+object ProdEnv : TerraformAwsServerlessDomainBuilder<Server>(Server) {
     override val displayName = "composable-2dos"
-    override val domain = "api.composable2dos.cs.lightningkite.com"
-    override val domainZone = "cs.lightningkite.com"
+    override val domain = "api.composable2dos.atmaweapon.net"
+    override val domainZone = "atmaweapon.net"
     override val terraformRoot: File = File("server/terraform/lk")
 
     override val handler: KClass<out AwsAdapter> = AwsHandler::class
     override val timeout: Duration = 5.minutes
 
-    override val storageBucket = "lightningkite-terraform"
+    override val storageBucket = "theatmaweapon-terraform"
     override val storageBucketPath: String
         get() = super.storageBucketPath
     override val debug = true
-    override val emergencyContact = "joseph@lightningkite.com".toEmailAddress()
+    override val emergencyContact = "ajdittli@gmail.com".toEmailAddress()
 
     override val region = Region.US_WEST_2!!
 
@@ -52,11 +52,11 @@ object LkEnv : TerraformAwsServerlessDomainBuilder<Server>(Server) {
     override fun Server.settings() {
         require(TerraformProviderImport.mongodbAtlas)
         require(TerraformProvider(TerraformProviderImport.mongodbAtlas, null, JsonObject(emptyMap())))
-        println(this@LkEnv.terraformProviderImports)
-        println(this@LkEnv.terraformProviders)
+        println(this@ProdEnv.terraformProviderImports)
+        println(this@ProdEnv.terraformProviders)
 
         loggingSettings.direct(LoggingSettings())
-        database.mongodbAtlasFree(orgId = "6323a65c43d66b56a2ea5aea")
+        database.mongodbAtlasFree(orgId = "69c2e8d698931d8bba6017c7")
         awsSesDomain("email",emergencyContact)
         email.awsSesSmtp("email")
         files.awsS3Bucket(signedUrlDuration = 1.days)
@@ -64,26 +64,31 @@ object LkEnv : TerraformAwsServerlessDomainBuilder<Server>(Server) {
         secretBasis.generated()
         telemetrySettings.direct(OpenTelemetrySettings("console", batching = null))
         cors.direct(CorsSettings(
-            limitToDomains = listOf("*"),
-            limitToHeaders = listOf("*"),
-            limitToMethods = listOf("*"),
-            allowCredentials = true,
-            exposedHeaders = listOf(),
+                limitToDomains = listOf(
+                    "app.composable2dos.atmaweapon.net",
+                    "www.app.composable2dos.atmaweapon.net",
+                    "api.composable2dos.atmaweapon.net",
+                    "www.api.composable2dos.atmaweapon.net",
+                ),
+                limitToHeaders = listOf("*"),
+                limitToMethods = listOf("*"),
+                allowCredentials = true,
+                exposedHeaders = emptyList(),
         ))
         notifications.byVariable()
-        webUrl.direct("https://app.composable2dos.cs.lightningkite.com")
+        webUrl.direct("https://app.composable2dos.atmaweapon.net")
     }
 }
 
 object DemoEnvDeploy {
     @JvmStatic
-    fun main(vararg args: String) = LkEnv.deploy()
+    fun main(vararg args: String) = ProdEnv.deploy()
 }
 object DemoEnvEdit {
     @JvmStatic
-    fun main(vararg args: String) = LkEnv.editVars()
+    fun main(vararg args: String) = ProdEnv.editVars()
 }
 object DemoEnvPrepare {
     @JvmStatic
-    fun main(vararg args: String): Unit = LkEnv.prepareTerraform().let(::println)
+    fun main(vararg args: String): Unit = ProdEnv.prepareTerraform().let(::println)
 }

@@ -13,12 +13,9 @@ import com.lightningkite.kiteui.current
 import com.lightningkite.kiteui.exceptions.ExceptionToMessages
 import com.lightningkite.kiteui.exceptions.installLsError
 import com.lightningkite.kiteui.models.*
-import com.lightningkite.kiteui.models.Icon.Companion
 import com.lightningkite.kiteui.navigation.PageNavigator
 import com.lightningkite.kiteui.navigation.dialogPageNavigator
-import com.lightningkite.kiteui.navigation.mainPageNavigator
 import com.lightningkite.kiteui.navigation.pageNavigator
-import com.lightningkite.kiteui.probablyAppleUser
 import com.lightningkite.kiteui.reactive.AppState
 import com.lightningkite.kiteui.views.*
 import com.lightningkite.kiteui.views.direct.*

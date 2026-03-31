@@ -2,7 +2,6 @@ package com.atmaweapon.composable2dos
 
 import com.lightningkite.kiteui.models.*
 import com.lightningkite.kiteui.reactive.PersistentProperty
-import com.lightningkite.reactive.core.Signal
 import com.lightningkite.reactive.core.remember
 import kotlinx.serialization.Serializable
 
