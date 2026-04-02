@@ -203,10 +203,29 @@
                 "default": {
                     "filePattern": null,
                     "toConsole": true,
-                    "level": "INFO",
+                    "level": "DEBUG",
                     "additive": false
                 },
-                "logger": null
+                "logger": {
+                    "org.mongodb": {
+                        "filePattern": null,
+                        "toConsole": false,
+                        "level": "INFO",
+                        "additive": false
+                    },
+                    "software.amazon.awssdk": {
+                        "filePattern": null,
+                        "toConsole": false,
+                        "level": "INFO",
+                        "additive": false
+                    },
+                    "io.netty": {
+                        "filePattern": null,
+                        "toConsole": false,
+                        "level": "INFO",
+                        "additive": false
+                    }
+                }
             },
             "files": "s3://${aws_s3_bucket.files.bucket}.s3-${aws_s3_bucket.files.region}.amazonaws.com/?signedUrlDuration=1d",
             "awsApiGatewayWsEndpointSetting": "${aws_apigatewayv2_stage.ws.invoke_url}",

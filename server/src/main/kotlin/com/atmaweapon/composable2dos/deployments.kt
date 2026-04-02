@@ -21,6 +21,7 @@ import com.lightningkite.services.terraform.TerraformProviderImport
 import com.lightningkite.services.terraform.byVariable
 import com.lightningkite.services.terraform.direct
 import com.lightningkite.toEmailAddress
+import io.github.oshai.kotlinlogging.Level
 import kotlinx.serialization.json.JsonObject
 import software.amazon.awssdk.regions.Region
 import java.io.File
@@ -55,7 +56,34 @@ object ProdEnv : TerraformAwsServerlessDomainBuilder<Server>(Server) {
         println(this@ProdEnv.terraformProviderImports)
         println(this@ProdEnv.terraformProviders)
 
-        loggingSettings.direct(LoggingSettings())
+        loggingSettings.direct(LoggingSettings(
+            default = LoggingSettings.ContextSettings(
+                filePattern = null,
+                toConsole = true,
+                level = Level.DEBUG,
+                additive = false
+            ),
+            logger = mapOf(
+                "org.mongodb" to LoggingSettings.ContextSettings(
+                    filePattern = null,
+                    toConsole = false,
+                    level = Level.INFO,
+                    additive = false
+                ),
+                "software.amazon.awssdk" to LoggingSettings.ContextSettings(
+                    filePattern = null,
+                    toConsole = false,
+                    level = Level.INFO,
+                    additive = false
+                ),
+                "io.netty" to LoggingSettings.ContextSettings(
+                    filePattern = null,
+                    toConsole = false,
+                    level = Level.INFO,
+                    additive = false
+                ),
+            )
+        ))
         database.mongodbAtlasFree(orgId = "69c2e8d698931d8bba6017c7")
         awsSesDomain("email",emergencyContact)
         email.awsSesSmtp("email")
