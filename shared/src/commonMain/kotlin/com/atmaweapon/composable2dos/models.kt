@@ -68,6 +68,7 @@ data class TaskSet(
     @References(User::class) val user: Uuid,
     val title: String,
     val createdAt: Instant = now(),
+    val color: String? = null,
 ) : HasId<Uuid>
 
 @Serializable

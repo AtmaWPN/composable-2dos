@@ -13,12 +13,12 @@ fun edgyTheme(): Theme {
         padding = Edges(0.5.rem),
         outlineWidth = 0.px,
         cornerRadii = CornerRadii.Fixed(0.rem),
-        background = Color.fromHexString("#BBBBBB"),
-        foreground = Color.fromHexString("#333333"),
+        background = Color.fromHexString("#b9b9b9"),
+        foreground = Color.fromHexString("#3a3a3a"),
         semanticOverrides = SemanticOverrides(
             // Danger - red styling
             DangerSemantic.override {
-                it.withBack(
+                it.withoutBack(
                     background = it.background,
                     foreground = Color.fromHexString("#640404"),
                     outline = Color.fromHexString("#640404"),
@@ -30,8 +30,8 @@ fun edgyTheme(): Theme {
             },
             NavSemantic.override {
                 it.withBack(
-                    foreground = Color.fromHexString("#BBBBBB"),
-                    background = Color.fromHexString("#333333"),
+                    foreground = it.background,
+                    background = it.foreground,
                     cornerRadii = CornerRadii.AdaptiveToSpacing(0.px),
 //                    cascading = false,
 //                    padding = Edges(0.px),
@@ -41,6 +41,50 @@ fun edgyTheme(): Theme {
             CardSemantic.override {
                 it.withBack(
                     background = it.background.darken(0.1f),
+                    cascading = true,
+                )
+            }
+        ),
+    )
+}
+
+fun happyTheme(): Theme {
+    return Theme(
+        id = "base",
+        elevation = 0.dp,
+        gap = 0.5.rem,
+        padding = Edges(0.5.rem),
+        outlineWidth = 0.px,
+        cornerRadii = CornerRadii.Fixed(0.rem),
+        background = Color.fromHexString("#a5c7a2"),
+        foreground = Color.fromHexString("#0b3009"),
+        semanticOverrides = SemanticOverrides(
+            // Danger - red styling
+            DangerSemantic.override {
+                it.withBack(
+                    background = it.background,
+                    foreground = Color.fromHexString("#800000"),
+                    outline = Color.fromHexString("#800000"),
+                    outlineWidth = 2.px,
+                )
+            },
+            HeaderSemantic.override {
+                it.withoutBack(padding = Edges(1.rem))
+            },
+            NavSemantic.override {
+                it.withBack(
+                    background = it.foreground,
+                    foreground = it.background,
+                    cornerRadii = CornerRadii.AdaptiveToSpacing(0.px),
+//                    cascading = false,
+//                    padding = Edges(0.px),
+                    gap = 0.px
+                )
+            },
+            CardSemantic.override {
+                it.withBack(
+                    background = it.background,
+                    outline = it.foreground,
                     cascading = true,
                 )
             }
@@ -66,11 +110,18 @@ enum class ThemePreferenceFont(val font: () -> FontAndStyle) {
             allCaps = true,
         )
     }),
+//    Fancy(font = {
+//        FontAndStyle(
+//            font = ,
+//            allCaps = true,
+//        )
+//    }),
 }
 
 @Serializable
 enum class ThemePreferenceOption(val make: (ThemePreference) -> Theme) {
     AtmaWeapon(make = { edgyTheme() }),
+    Happy(make = { happyTheme() }),
     Flat2(make = { Theme.flat2("flat2", 0.6.turns) }),
     ShadLight(make = { Theme.shadCnLike("shad-light", Color.gray(0.95f)) }),
     ShadDark(make = { Theme.shadCnLike("shad-dark", Color.gray(0.05f)) }),

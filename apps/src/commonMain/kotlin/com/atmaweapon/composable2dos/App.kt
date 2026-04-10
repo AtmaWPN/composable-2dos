@@ -12,6 +12,7 @@ import com.lightningkite.kiteui.Platform
 import com.lightningkite.kiteui.current
 import com.lightningkite.kiteui.exceptions.ExceptionToMessages
 import com.lightningkite.kiteui.exceptions.installLsError
+import com.lightningkite.kiteui.forms.JsonRenderer.JsonSemantic.withBack
 import com.lightningkite.kiteui.models.*
 import com.lightningkite.kiteui.navigation.PageNavigator
 import com.lightningkite.kiteui.navigation.dialogPageNavigator
@@ -47,6 +48,17 @@ fun ViewWriter.appNavBottomTabsIconOnly(setup: AppNav.() -> Unit): Unit {
             applySafeInsets(bottom = false)
             debugName = "normal app bar"
             showOnPrint = false
+            dynamicTheme {
+                val page = pageNavigator.currentPage()
+                if (page is TaskSetDetailPage) {
+                    val hexColor = try { page.taskSet().color } catch (_: Exception) { null }
+                        ?: return@dynamicTheme null
+                    ThemeDerivation {
+                        val bg = Color.fromHexString(hexColor)
+                        it.withBack(background = bg, foreground = bg.highlight(1f))
+                    }
+                } else null
+            }
             setup(appNav)
             if (Platform.current != Platform.Web) button {
                 icon(Icon.arrowBack, "Go Back")

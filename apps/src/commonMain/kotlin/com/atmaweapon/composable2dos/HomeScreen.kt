@@ -3,9 +3,8 @@ package com.atmaweapon.composable2dos
 import com.atmaweapon.composable2dos.sdk.currentSession
 import com.atmaweapon.composable2dos.sdk.currentSessionNotNull
 import com.lightningkite.kiteui.Routable
-import com.lightningkite.kiteui.models.Edges
-import com.lightningkite.kiteui.models.Icon
-import com.lightningkite.kiteui.models.rem
+import com.lightningkite.kiteui.forms.JsonRenderer.JsonSemantic.withBack
+import com.lightningkite.kiteui.models.*
 import com.lightningkite.kiteui.navigation.Page
 import com.lightningkite.kiteui.navigation.pageNavigator
 import com.lightningkite.kiteui.reactive.Action
@@ -65,6 +64,13 @@ class HomePage : Page {
                             paddingByEdge = Edges(1.rem, 0.rem, 1.rem, 0.rem)
                             gap = 1.rem
                             card.button {
+                                dynamicTheme {
+                                    val hexColor = taskSet().color ?: return@dynamicTheme null
+                                    ThemeDerivation {
+                                        val bg = Color.fromHexString(hexColor)
+                                        it.withBack(background = bg, foreground = bg.highlight(1f))
+                                    }
+                                }
                                 column {
                                     row {
                                         expanding.text { ::content { taskSet().title } }
@@ -95,12 +101,19 @@ class HomePage : Page {
                                     }
                                 }
                             }
-                            atTopEnd.danger.button {
-                                gap = 1.rem
-                                icon(Icon.delete, "Delete task set")
-                                onClick {
-                                    confirmDanger("Delete task set?", "", "Delete") {
-                                        currentSessionNotNull().taskSets[taskSet()._id].delete()
+                            atTopEnd.row {
+                                button {
+                                    icon(Icon.settings, "Configure task set")
+                                    onClick {
+                                        pageNavigator.navigate(TaskSetConfigPage(taskSet()._id))
+                                    }
+                                }
+                                danger.button {
+                                    icon(Icon.delete, "Delete task set")
+                                    onClick {
+                                        confirmDanger("Delete task set?", "", "Delete") {
+                                            currentSessionNotNull().taskSets[taskSet()._id].delete()
+                                        }
                                     }
                                 }
                             }
