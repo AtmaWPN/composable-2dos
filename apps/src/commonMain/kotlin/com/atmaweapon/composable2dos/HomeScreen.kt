@@ -62,30 +62,30 @@ class HomePage : Page {
                         expanding.frame {
                             paddingByEdge = Edges(1.rem, 0.rem, 1.rem, 0.rem)
                             gap = 1.rem
-                            card.button {
-                                dynamicTheme {
-                                    val hexColor = taskSet().color ?: return@dynamicTheme null
-                                    ThemeDerivation {
-                                        val bg = Color.fromHexString(hexColor)
-                                        it.copy(id = "taskset_${bg.toInt()}", background = bg, foreground = bg.highlight(1f)).withBack
-                                    }
-                                }
+                            card.unpadded.button {
                                 column {
                                     row {
+                                        dynamicTheme {
+                                            val hexColor = taskSet().color ?: return@dynamicTheme null
+                                            ThemeDerivation {
+                                                val bg = Color.fromHexString(hexColor)
+                                                it.copy(id = "taskset_${bg.toInt()}", background = bg, foreground = bg.highlight(1f)).withBack
+                                            }
+                                        }
                                         expanding.text { ::content { taskSet().title } }
-
                                     }
                                     column {
+                                        gap = 0.dp
                                         shownWhen { previewTasks().isNotEmpty() }.expanding.text {
-                                            paddingByEdge = Edges(2.rem, 0.rem, 0.rem, 0.rem)
+                                            paddingByEdge = Edges(2.rem, 0.rem, 0.rem, 0.3.rem)
                                             ::content { previewTasks().getOrNull(0)?.title ?: "No Data" }
                                         }
                                         shownWhen { previewTasks().size >= 2 }.expanding.text {
-                                            paddingByEdge = Edges(2.rem, 0.rem, 0.rem, 0.rem)
+                                            paddingByEdge = Edges(2.rem, 0.rem, 0.rem, 0.3.rem)
                                             ::content { previewTasks().getOrNull(1)?.title ?: "No Data" }
                                         }
                                         shownWhen { previewTasks().size >= 3 }.expanding.text {
-                                            paddingByEdge = Edges(2.rem, 0.rem, 0.rem, 0.rem)
+                                            paddingByEdge = Edges(2.rem, 0.rem, 0.rem, 0.3.rem)
                                             ::content { previewTasks().getOrNull(2)?.title ?: "No Data" }
                                         }
                                     }

@@ -53,9 +53,9 @@ class LoginPage : Page, UseFullPage {
             }
 
             centered.sizedBox(SizeConstraints(maxWidth = 40.rem)).scrolling.col {
-                centered.h4("Lightning Server and KiteUI Template")
-                centered.text("This template is your bare bones starting point")
-                centered.text("Sign in to get started")
+                centered.h4("Composable 2DOs")
+                centered.text("This is a project I'm working on for my own benefit.")
+                centered.text("If you'd like to try it out and you know me personally, reach out and I can get you an account.")
 
                 shownWhen { backendSelectorEnabled() }.field("Server") {
                     select {
