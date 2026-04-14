@@ -3,7 +3,6 @@ package com.atmaweapon.composable2dos
 import com.atmaweapon.composable2dos.sdk.currentSession
 import com.atmaweapon.composable2dos.sdk.currentSessionNotNull
 import com.lightningkite.kiteui.Routable
-import com.lightningkite.kiteui.forms.JsonRenderer.JsonSemantic.withBack
 import com.lightningkite.kiteui.models.*
 import com.lightningkite.kiteui.navigation.Page
 import com.lightningkite.kiteui.navigation.pageNavigator
@@ -68,7 +67,7 @@ class HomePage : Page {
                                     val hexColor = taskSet().color ?: return@dynamicTheme null
                                     ThemeDerivation {
                                         val bg = Color.fromHexString(hexColor)
-                                        it.withBack(background = bg, foreground = bg.highlight(1f))
+                                        it.copy(id = "taskset_${bg.toInt()}", background = bg, foreground = bg.highlight(1f)).withBack
                                     }
                                 }
                                 column {

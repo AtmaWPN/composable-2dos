@@ -50,7 +50,7 @@ fun edgyTheme(): Theme {
 
 fun happyTheme(): Theme {
     return Theme(
-        id = "base",
+        id = "happy",
         elevation = 0.dp,
         gap = 0.5.rem,
         padding = Edges(0.5.rem),
@@ -61,12 +61,12 @@ fun happyTheme(): Theme {
         semanticOverrides = SemanticOverrides(
             // Danger - red styling
             DangerSemantic.override {
-                it.withBack(
+                it.alter(
                     background = it.background,
                     foreground = Color.fromHexString("#800000"),
                     outline = Color.fromHexString("#800000"),
                     outlineWidth = 2.px,
-                )
+                ).withoutBackButPadding
             },
             HeaderSemantic.override {
                 it.withoutBack(padding = Edges(1.rem))

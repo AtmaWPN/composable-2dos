@@ -12,7 +12,6 @@ import com.lightningkite.kiteui.Platform
 import com.lightningkite.kiteui.current
 import com.lightningkite.kiteui.exceptions.ExceptionToMessages
 import com.lightningkite.kiteui.exceptions.installLsError
-import com.lightningkite.kiteui.forms.JsonRenderer.JsonSemantic.withBack
 import com.lightningkite.kiteui.models.*
 import com.lightningkite.kiteui.navigation.PageNavigator
 import com.lightningkite.kiteui.navigation.dialogPageNavigator
@@ -55,7 +54,7 @@ fun ViewWriter.appNavBottomTabsIconOnly(setup: AppNav.() -> Unit): Unit {
                         ?: return@dynamicTheme null
                     ThemeDerivation {
                         val bg = Color.fromHexString(hexColor)
-                        it.withBack(background = bg, foreground = bg.highlight(1f))
+                        it.copy(id = "taskset_${bg.toInt()}", background = bg, foreground = bg.highlight(1f)).withBack
                     }
                 } else null
             }
@@ -85,6 +84,14 @@ fun ViewWriter.appNavBottomTabsIconOnly(setup: AppNav.() -> Unit): Unit {
             ::shown { appNav.existsProperty() && !AppState.softInputOpen() }
         }
     }
+}
+
+fun ViewWriter.mobileHedging(width: Dimension = 40.rem): ViewWriter {
+    val r: ViewWriter
+    frame {
+        r = align(Align.Center, Align.Stretch).sizeConstraints(width = width)
+    }
+    return r
 }
 
 fun ViewWriter.app(navigator: PageNavigator, dialog: PageNavigator) {
@@ -142,7 +149,7 @@ fun ViewWriter.app(navigator: PageNavigator, dialog: PageNavigator) {
 
     appNavFactory.value = ViewWriter::appNavBottomTabsIconOnly
     navigator.navigate(LandingPage())
-    return appNav(navigator, dialog) {
+    return mobileHedging().appNav(navigator, dialog) {
         appName = "Composable 2DOs"
         ::navItems {
             listOf(

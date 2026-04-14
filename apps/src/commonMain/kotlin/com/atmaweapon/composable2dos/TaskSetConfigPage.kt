@@ -4,17 +4,15 @@ import com.atmaweapon.composable2dos.sdk.currentSession
 import com.atmaweapon.composable2dos.sdk.currentSessionNotNull
 import com.lightningkite.kiteui.Routable
 import com.lightningkite.kiteui.models.Color
-import com.lightningkite.kiteui.models.rem
 import com.lightningkite.kiteui.navigation.Page
 import com.lightningkite.kiteui.navigation.pageNavigator
 import com.lightningkite.kiteui.views.*
 import com.lightningkite.kiteui.views.direct.*
 import com.lightningkite.reactive.context.invoke
 import com.lightningkite.reactive.context.reactive
-import com.lightningkite.reactive.context.reactiveSuspending
 import com.lightningkite.reactive.core.Constant
+import com.lightningkite.reactive.core.Draft
 import com.lightningkite.reactive.core.Reactive
-import com.lightningkite.reactive.core.Signal
 import com.lightningkite.reactive.core.remember
 import com.lightningkite.reactive.extensions.withWrite
 import com.lightningkite.services.database.modification
@@ -40,23 +38,19 @@ class TaskSetConfigPage(val id: Uuid) : Page {
                 h6("Color")
 
                 val defaultColor = OkhsvColor(0.6f, 0.8f, 0.85f).toRGB()
-                val color = remember {
+                val savedColor = remember {
                     taskSet().color?.let { Color.fromHexString(it) } ?: defaultColor
                 }.withWrite { newColor ->
                     currentSessionNotNull().taskSets[id].modify(modification { it.color assign newColor.toAlphalessWeb() })
                 }
+                val colorDraft = Draft(savedColor)
 
-                reactiveSuspending {
-                    val newHex = color().toAlphalessWeb()
-                    val currentHex = try { taskSet().color } catch (_: Exception) { return@reactiveSuspending }
-                    if (newHex != currentHex) {
-                        currentSessionNotNull().taskSets[id].modify(
-                            modification { it.color assign newHex }
-                        )
-                    }
+                okhsvColorPicker(colorDraft)
+
+                important.button {
+                    centered.text("Save color")
+                    onClick { colorDraft.publish() }
                 }
-
-                okhsvColorPicker(color)
 
                 danger.button {
                     centered.text("Remove color")

@@ -48,7 +48,7 @@ object ProdEnv : TerraformAwsServerlessDomainBuilder<Server>(Server) {
 
     override val region = Region.US_WEST_2!!
 
-    override val secretsSource: SecretSource = AwsSecretSource(projectPrefix, region)
+    override val secretsSource: SecretSource = AwsSecretSource(projectPrefix, "composable2dos_secrets", region)
 
     override fun Server.settings() {
         require(TerraformProviderImport.mongodbAtlas)

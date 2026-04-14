@@ -1,5 +1,6 @@
 package com.atmaweapon.composable2dos
 
+import com.atmaweapon.composable2dos.extensions.enablePointerCapture
 import com.lightningkite.kiteui.models.*
 import com.lightningkite.kiteui.views.*
 import com.lightningkite.kiteui.views.canvas.*
@@ -132,29 +133,46 @@ private fun okhsvHueColor(hue: Float): Color =
 
 fun ViewWriter.okhsvColorPicker(color: MutableReactive<Color>) {
     col {
-        val debounced = color.debounce(200)
-        val okhsv = remember { OkhsvColor.fromRGB(debounced()) }
+        val okhsv = MutableRemember { OkhsvColor.fromRGB(color()) }
 
-        // Sync: internal okhsv → external color
         reactiveSuspending {
             color.set(okhsv().toRGB())
         }
+        reactive {
+            if (okhsv.state.ready) {
+                val parentColor = color()
+                val local = okhsv.state.raw.toRGB()
+                val tolerance = 0.01f
+                val isDifferent =
+                    abs(parentColor.red - local.red) > tolerance ||
+                        abs(parentColor.green - local.green) > tolerance ||
+                        abs(parentColor.blue - local.blue) > tolerance
+                if (isDifferent) {
+                    okhsv.value = OkhsvColor.fromRGB(parentColor)
+                }
+            }
+        }
 
         // 2D saturation/value panel
-        sizeConstraints(minWidth = 16.rem, minHeight = 12.rem).canvas {
-            val delegate = object : CanvasDelegate() {
+        sizeConstraints(minWidth = 16.rem, aspectRatio = 1.0).canvas {
+            val svDelegate = object : CanvasDelegate() {
+                private var isDragging = false
+
                 private fun update(x: Double, y: Double, w: Double, h: Double) {
                     val s = (x / w).toFloat().coerceIn(0f, 1f)
                     val v = (1.0 - y / h).toFloat().coerceIn(0f, 1f)
-                    suspend { color.set(okhsv.state.raw.copy(saturation = s, value = v).toRGB()) }
+                    okhsv.value = okhsv.state.raw.copy(saturation = s, value = v)
                     invalidate()
                 }
 
                 override fun onPointerDown(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
-                    update(x, y, width, height); return true
+                    isDragging = true; update(x, y, width, height); return true
                 }
                 override fun onPointerMove(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
-                    update(x, y, width, height); return true
+                    if (isDragging) update(x, y, width, height); return true
+                }
+                override fun onPointerUp(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
+                    isDragging = false; return true
                 }
 
                 override fun draw(context: DrawingContext2D) {
@@ -170,7 +188,7 @@ fun ViewWriter.okhsvColorPicker(color: MutableReactive<Color>) {
                         val topColor = OkhsvColor(current.hue, sat, 1f).toRGB()
                         context.fillPaint = LinearGradient(
                             stops = listOf(GradientStop(0f, topColor), GradientStop(1f, Color.black)),
-                            angle = Angle.zero,
+                            x0 = 0.0, y0 = 0.0, x1 = 0.0, y1 = h,
                         )
                         context.fillRect(x0, 0.0, x1 - x0, h)
                     }
@@ -191,36 +209,43 @@ fun ViewWriter.okhsvColorPicker(color: MutableReactive<Color>) {
                     context.stroke()
                 }
 
-                override fun sizeThatFitsHeight(width: Double, height: Double): Double = 192.0
             }
-            delegate.invalidate = { this.delegate = delegate }
+            this.delegate = svDelegate
+            svDelegate.invalidate = { this.delegate = svDelegate }
+            reactive { okhsv(); svDelegate.invalidate() }
+            enablePointerCapture()
         }
 
         // Hue slider
-        sizeConstraints(minHeight = 1.5.rem).canvas {
+        sizeConstraints(height = 1.5.rem).canvas {
             val hueDelegate = object : CanvasDelegate() {
+                private var isDragging = false
+
                 private fun update(x: Double, width: Double) {
                     val h = (x / width).toFloat().coerceIn(0f, 1f)
-                    suspend { color.set(okhsv.state.raw.copy(hue = h).toRGB()) }
+                    okhsv.value = okhsv.state.raw.copy(hue = h)
                     invalidate()
                 }
 
                 override fun onPointerDown(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
-                    update(x, width); return true
+                    isDragging = true; update(x, width); return true
                 }
                 override fun onPointerMove(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
-                    update(x, width); return true
+                    if (isDragging) update(x, width); return true
+                }
+                override fun onPointerUp(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
+                    isDragging = false; return true
                 }
 
                 override fun draw(context: DrawingContext2D) {
                     val w = context.width; val h = context.height
-                    // Hue gradient — 13 stops across full hue spectrum
                     val stops = (0..12).map { i ->
                         val t = i / 12f
                         GradientStop(t, okhsvHueColor(t))
                     }
                     context.fillPaint = LinearGradient(
-                        stops = stops, angle = Angle.zero,
+                        stops = stops,
+                        x0 = 0.0, y0 = 0.0, x1 = w, y1 = 0.0,
                     )
                     context.fillRect(0.0, 0.0, w, h)
 
@@ -240,9 +265,11 @@ fun ViewWriter.okhsvColorPicker(color: MutableReactive<Color>) {
                     context.stroke()
                 }
 
-                override fun sizeThatFitsHeight(width: Double, height: Double): Double = 24.0
             }
+            this.delegate = hueDelegate
             hueDelegate.invalidate = { this.delegate = hueDelegate }
+            reactive { okhsv(); hueDelegate.invalidate() }
+            enablePointerCapture()
         }
 
         // Color swatch + hex display
