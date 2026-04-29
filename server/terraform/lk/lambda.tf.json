@@ -177,7 +177,7 @@
                 "debug": true,
                 "emergencyContact": "ajdittli@gmail.com"
             },
-            "database": "mongodb+srv://composable2dosdatabase-main:${random_password.database.result}@${replace(mongodbatlas_advanced_cluster.database.connection_strings.standard_srv, \"mongodb+srv://\", \"\")}/default?retryWrites=true&w=majority",
+            "database": "mongodb+srv://composable2dosdatabase-main:${random_password.database.result}@${replace(mongodbatlas_advanced_cluster.database.connection_strings.standard_srv, \"mongodb+srv://\", \"\")}/default?retryWrites=true&w=majority&atlasSearch=true",
             "cache": "dynamodb://us-west-2/composable_2dos",
             "cors": {
                 "limitToDomains": [

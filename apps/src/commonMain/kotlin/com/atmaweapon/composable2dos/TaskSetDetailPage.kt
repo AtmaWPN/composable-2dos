@@ -3,6 +3,7 @@ package com.atmaweapon.composable2dos
 import com.atmaweapon.composable2dos.sdk.currentSession
 import com.atmaweapon.composable2dos.sdk.currentSessionNotNull
 import com.lightningkite.kiteui.Routable
+import com.lightningkite.kiteui.models.Edges
 import com.lightningkite.kiteui.models.Icon
 import com.lightningkite.kiteui.models.rem
 import com.lightningkite.kiteui.navigation.Page
@@ -64,6 +65,7 @@ class TaskSetDetailPage(val id: Uuid) : Page {
 
         col {
             expanding.recyclerView {
+                paddingByEdge = Edges(0.5.rem, 0.rem)
                 placer = RecyclerViewPlacerVerticalGrid(1)
 
                 children(
@@ -89,16 +91,17 @@ class TaskSetDetailPage(val id: Uuid) : Page {
                                     )
                                 }
                             }
-
-                            centeredVertically.shownWhen { completed() }.expanding.strikethrough.text {
-                                ::content { it().title }
+                            expanding.row {
+                                centeredVertically.shownWhen { completed() }.strikethrough.text {
+                                    ::content { it().title }
+                                }
+                                centeredVertically.shownWhen { !completed() }.text {
+                                    ::content { it().title }
+                                }
+                                expanding.space()
                             }
-                            centeredVertically.shownWhen { !completed() }.expanding.text {
-                                ::content { it().title }
-                            }
-                            expanding.space()
-                            danger.button {
-                                icon(Icon.delete, "Delete task")
+                            centeredVertically.danger.sizeConstraints(aspectRatio = 1.0).button {
+                                centered.icon(Icon.delete, "Delete task")
                                 onClick {
                                     confirmDanger("Confirm Deletion?", "", "Delete") {
                                         currentSessionNotNull().tasks[it()._id].delete()

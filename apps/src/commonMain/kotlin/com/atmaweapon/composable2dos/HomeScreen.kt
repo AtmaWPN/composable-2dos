@@ -66,7 +66,7 @@ class HomePage : Page {
                                 column {
                                     row {
                                         dynamicTheme {
-                                            val hexColor = taskSet().color ?: return@dynamicTheme null
+                                            val hexColor = taskSet().color ?: theme.background.closestColor().toAlphalessWeb()
                                             ThemeDerivation {
                                                 val bg = Color.fromHexString(hexColor)
                                                 it.copy(id = "taskset_${bg.toInt()}", background = bg, foreground = bg.highlight(1f)).withBack
@@ -101,6 +101,13 @@ class HomePage : Page {
                                 }
                             }
                             atTopEnd.row {
+                                dynamicTheme {
+                                    val hexColor = taskSet().color ?: return@dynamicTheme null
+                                    ThemeDerivation {
+                                        val bg = Color.fromHexString(hexColor)
+                                        it.copy(id = "taskset_icon_${bg.toInt()}", foreground = bg.highlight(1f)).withoutBack
+                                    }
+                                }
                                 button {
                                     icon(Icon.settings, "Configure task set")
                                     onClick {

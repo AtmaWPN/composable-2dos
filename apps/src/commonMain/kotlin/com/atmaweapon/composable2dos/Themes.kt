@@ -18,11 +18,9 @@ fun edgyTheme(): Theme {
         semanticOverrides = SemanticOverrides(
             // Danger - red styling
             DangerSemantic.override {
-                it.withoutBack(
-                    background = it.background,
-                    foreground = Color.fromHexString("#640404"),
-                    outline = Color.fromHexString("#640404"),
-                    outlineWidth = 2.px,
+                it.withBack(
+                background = Color.fromHexString("#E53935"),
+                    foreground = Color.white,
                 )
             },
             HeaderSemantic.override {
@@ -61,12 +59,10 @@ fun happyTheme(): Theme {
         semanticOverrides = SemanticOverrides(
             // Danger - red styling
             DangerSemantic.override {
-                it.alter(
-                    background = it.background,
-                    foreground = Color.fromHexString("#800000"),
-                    outline = Color.fromHexString("#800000"),
-                    outlineWidth = 2.px,
-                ).withoutBackButPadding
+                it.withBack(
+                    background = Color.fromHexString("#E53935"),
+                    foreground = Color.white,
+                )
             },
             HeaderSemantic.override {
                 it.withoutBack(padding = Edges(1.rem))

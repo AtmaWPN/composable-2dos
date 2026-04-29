@@ -8,6 +8,7 @@ import com.lightningkite.kiteui.views.direct.*
 import com.lightningkite.reactive.context.*
 import com.lightningkite.reactive.core.*
 import com.lightningkite.reactive.extensions.*
+import com.lightningkite.reactive.lensing.lens
 import kotlin.math.*
 
 // ─── OKHSV color math ────────────────────────────────────────────────────────
@@ -296,9 +297,8 @@ fun ViewWriter.okhsvColorPicker(color: MutableReactive<Color>) {
     col {
         val okhsv = MutableRemember { OkhsvColor.fromRGB(color()) }
 
-        reactiveSuspending {
-            color.set(okhsv().toRGB())
-        }
+        color bind okhsv.lens { it.toRGB() }.withWrite { OkhsvColor.fromRGB(it) }
+
         reactive {
             if (okhsv.state.ready) {
                 val parentColor = color()
@@ -314,70 +314,6 @@ fun ViewWriter.okhsvColorPicker(color: MutableReactive<Color>) {
             }
         }
 
-        // 2D saturation/value panel
-        sizeConstraints(minWidth = 16.rem, aspectRatio = 1.0).canvas {
-            val svDelegate = object : CanvasDelegate() {
-                private var isDragging = false
-
-                private fun update(x: Double, y: Double, w: Double, h: Double) {
-                    val s = (x / w).toFloat().coerceIn(0f, 1f)
-                    val v = (1.0 - y / h).toFloat().coerceIn(0f, 1f)
-                    okhsv.value = okhsv.state.raw.copy(saturation = s, value = v)
-                    invalidate()
-                }
-
-                override fun onPointerDown(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
-                    isDragging = true; update(x, y, width, height); return true
-                }
-                override fun onPointerMove(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
-                    if (isDragging) update(x, y, width, height); return true
-                }
-                override fun onPointerUp(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
-                    isDragging = false; return true
-                }
-
-                override fun draw(context: DrawingContext2D) {
-                    val w = context.width
-                    val h = context.height
-                    val current = okhsv.state.raw
-                    val numStrips = 64
-                    val stripW = w / numStrips
-
-                    for (i in 0 until numStrips) {
-                        val x0 = i * stripW
-                        val x1 = x0 + stripW + 1.0
-                        val sat = i.toFloat() / numStrips.toFloat()
-                        val topColor = OkhsvColor(current.hue, sat, 1f).toRGB()
-                        context.fillPaint = LinearGradient(
-                            stops = listOf(GradientStop(0f, topColor), GradientStop(1f, Color.black)),
-                            x0 = 0.0, y0 = 0.0, x1 = 0.0, y1 = h,
-                        )
-                        context.fillRect(x0, 0.0, x1 - x0, h)
-                    }
-
-                    // Indicator circle
-                    val cx = current.saturation * w
-                    val cy = (1f - current.value) * h
-                    val r = 6.0
-                    context.strokePaint = Color.white
-                    context.lineWidth = 2.0
-                    context.beginPath()
-                    context.appendArc(cx, cy, r, Angle.zero, Angle(1f), false)
-                    context.stroke()
-                    context.strokePaint = Color.black
-                    context.lineWidth = 1.0
-                    context.beginPath()
-                    context.appendArc(cx, cy, r + 1.5, Angle.zero, Angle(1f), false)
-                    context.stroke()
-                }
-
-            }
-            this.delegate = svDelegate
-            svDelegate.invalidate = { this.delegate = svDelegate }
-            reactive { okhsv(); svDelegate.invalidate() }
-            enablePointerCapture()
-        }
-
         // Hue slider
         sizeConstraints(height = 1.5.rem).canvas {
             val hueDelegate = object : CanvasDelegate() {
@@ -385,6 +321,7 @@ fun ViewWriter.okhsvColorPicker(color: MutableReactive<Color>) {
 
                 private fun update(x: Double, width: Double) {
                     val h = (x / width).toFloat().coerceIn(0f, 1f)
+
                     okhsv.value = okhsv.state.raw.copy(hue = h)
                     invalidate()
                 }
@@ -401,9 +338,10 @@ fun ViewWriter.okhsvColorPicker(color: MutableReactive<Color>) {
 
                 override fun draw(context: DrawingContext2D) {
                     val w = context.width; val h = context.height
+                    val current = okhsv.state.raw
                     val stops = (0..12).map { i ->
                         val t = i / 12f
-                        GradientStop(t, OkhsvColor(t, 1f, 1f).toRGB())
+                        GradientStop(t, OkhsvColor(t, current.saturation, current.value).toRGB())
                     }
                     context.fillPaint = LinearGradient(
                         stops = stops,
@@ -431,6 +369,118 @@ fun ViewWriter.okhsvColorPicker(color: MutableReactive<Color>) {
             this.delegate = hueDelegate
             hueDelegate.invalidate = { this.delegate = hueDelegate }
             reactive { okhsv(); hueDelegate.invalidate() }
+            enablePointerCapture()
+        }
+
+        // Saturation slider
+        sizeConstraints(height = 1.5.rem).canvas {
+            val satDelegate = object : CanvasDelegate() {
+                private var isDragging = false
+
+                private fun update(x: Double, width: Double) {
+                    val s = (x / width).toFloat().coerceIn(0f, 1f)
+                    okhsv.value = okhsv.state.raw.copy(saturation = s)
+                    invalidate()
+                }
+
+                override fun onPointerDown(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
+                    isDragging = true; update(x, width); return true
+                }
+                override fun onPointerMove(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
+                    if (isDragging) update(x, width); return true
+                }
+                override fun onPointerUp(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
+                    isDragging = false; return true
+                }
+
+                override fun draw(context: DrawingContext2D) {
+                    val w = context.width; val h = context.height
+                    val current = okhsv.state.raw
+                    val stops = (0..12).map { i ->
+                        val t = i / 12f
+                        GradientStop(t, OkhsvColor(current.hue, t, current.value).toRGB())
+                    }
+                    context.fillPaint = LinearGradient(
+                        stops = stops,
+                        x0 = 0.0, y0 = 0.0, x1 = w, y1 = 0.0,
+                    )
+                    context.fillRect(0.0, 0.0, w, h)
+
+                    // Indicator line
+                    val x = current.saturation * w
+                    context.strokePaint = Color.white
+                    context.lineWidth = 2.0
+                    context.beginPath()
+                    context.moveTo(x, 0.0)
+                    context.lineTo(x, h)
+                    context.stroke()
+                    context.strokePaint = Color.black
+                    context.lineWidth = 1.0
+                    context.beginPath()
+                    context.moveTo(x - 1.0, 0.0)
+                    context.lineTo(x - 1.0, h)
+                    context.stroke()
+                }
+            }
+            this.delegate = satDelegate
+            satDelegate.invalidate = { this.delegate = satDelegate }
+            reactive { okhsv(); satDelegate.invalidate() }
+            enablePointerCapture()
+        }
+
+        // Value slider
+        sizeConstraints(height = 1.5.rem).canvas {
+            val valDelegate = object : CanvasDelegate() {
+                private var isDragging = false
+
+                private fun update(x: Double, width: Double) {
+                    val v = (x / width).toFloat().coerceIn(0f, 1f)
+                    okhsv.value = okhsv.state.raw.copy(value = v)
+                    invalidate()
+                }
+
+                override fun onPointerDown(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
+                    isDragging = true; update(x, width); return true
+                }
+                override fun onPointerMove(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
+                    if (isDragging) update(x, width); return true
+                }
+                override fun onPointerUp(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
+                    isDragging = false; return true
+                }
+
+                override fun draw(context: DrawingContext2D) {
+                    val w = context.width; val h = context.height
+                    val current = okhsv.state.raw
+                    val stops = (0..12).map { i ->
+                        val t = i / 12f
+                        GradientStop(t, OkhsvColor(current.hue, current.saturation, t).toRGB())
+                    }
+                    context.fillPaint = LinearGradient(
+                        stops = stops,
+                        x0 = 0.0, y0 = 0.0, x1 = w, y1 = 0.0,
+                    )
+                    context.fillRect(0.0, 0.0, w, h)
+
+                    // Indicator line
+                    val x = current.value * w
+                    context.strokePaint = Color.white
+                    context.lineWidth = 2.0
+                    context.beginPath()
+                    context.moveTo(x, 0.0)
+                    context.lineTo(x, h)
+                    context.stroke()
+                    context.strokePaint = Color.black
+                    context.lineWidth = 1.0
+                    context.beginPath()
+                    context.moveTo(x - 1.0, 0.0)
+                    context.lineTo(x - 1.0, h)
+                    context.stroke()
+                }
+            }
+            this.delegate = valDelegate
+            valDelegate.invalidate = { this.delegate = valDelegate }
+            reactive { okhsv(); valDelegate.invalidate() }
             enablePointerCapture()
         }
 
