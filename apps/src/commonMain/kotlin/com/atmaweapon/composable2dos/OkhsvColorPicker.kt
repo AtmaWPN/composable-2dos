@@ -53,35 +53,35 @@ private object OKHSV {
 
     fun linearSrgbToOklab(c: Triple<Float, Float, Float>): Triple<Float, Float, Float>
     {
-        val l = 0.4122214708f * c.first + 0.5363325363f * c.second + 0.0514459929f * c.third
-        val m = 0.2119034982f * c.first + 0.6806995451f * c.second + 0.1073969566f * c.third
-        val s = 0.0883024619f * c.first + 0.2817188376f * c.second + 0.6299787005f * c.third
+        val l = 0.41222146f * c.first + 0.53633255f * c.second + 0.051445995f * c.third
+        val m = 0.2119035f * c.first + 0.6806995f * c.second + 0.10739696f * c.third
+        val s = 0.08830246f * c.first + 0.28171885f * c.second + 0.6299787f * c.third
 
-        val l_ = cbrt(l);
-        val m_ = cbrt(m);
-        val s_ = cbrt(s);
+        val l_ = cbrt(l)
+        val m_ = cbrt(m)
+        val s_ = cbrt(s)
 
         return Triple(
-            0.2104542553f * l_ + 0.7936177850f * m_ - 0.0040720468f * s_,
-            1.9779984951f * l_ - 2.4285922050f * m_ + 0.4505937099f * s_,
-            0.0259040371f * l_ + 0.7827717662f * m_ - 0.8086757660f * s_,
+            0.21045426f * l_ + 0.7936178f * m_ - 0.004072047f * s_,
+            1.9779985f * l_ - 2.4285922f * m_ + 0.4505937f * s_,
+            0.025904037f * l_ + 0.78277177f * m_ - 0.80867577f * s_,
         )
     }
 
     fun oklabToLinearSrgb(c: Triple<Float, Float, Float>): Triple<Float, Float, Float>
     {
-        val l_ = c.first + 0.3963377774f * c.second + 0.2158037573f * c.third
-        val m_ = c.first - 0.1055613458f * c.second - 0.0638541728f * c.third
-        val s_ = c.first - 0.0894841775f * c.second - 1.2914855480f * c.third
+        val l_ = c.first + 0.39633778f * c.second + 0.21580376f * c.third
+        val m_ = c.first - 0.105561346f * c.second - 0.06385417f * c.third
+        val s_ = c.first - 0.08948418f * c.second - 1.2914855f * c.third
 
-        val l = l_ * l_ * l_;
-        val m = m_ * m_ * m_;
-        val s = s_ * s_ * s_;
+        val l = l_ * l_ * l_
+        val m = m_ * m_ * m_
+        val s = s_ * s_ * s_
 
         return Triple(
-            +4.0767416621f * l - 3.3077115913f * m + 0.2309699292f * s,
-            -1.2684380046f * l + 2.6097574011f * m - 0.3413193965f * s,
-            -0.0041960863f * l - 0.7034186147f * m + 1.7076147010f * s,
+            +4.0767417f * l - 3.3077116f * m + 0.23096994f * s,
+            -1.268438f * l + 2.6097574f * m - 0.34131938f * s,
+            -0.0041960864f * l - 0.7034186f * m + 1.7076147f * s,
         )
     }
 
@@ -99,69 +99,69 @@ private object OKHSV {
         var wm: Float
         var ws: Float
 
-        if (-1.88170328f * a - 0.80936493f * b > 1)
+        if (-1.8817033f * a - 0.8093649f * b > 1)
         {
             // Red component
-            k0 = +1.19086277f; k1 = +1.76576728f; k2 = +0.59662641f; k3 = +0.75515197f; k4 = +0.56771245f;
-            wl = +4.0767416621f; wm = -3.3077115913f; ws = +0.2309699292f;
+            k0 = 1.1908628f; k1 = 1.7657673f; k2 = 0.5966264f; k3 = 0.755152f; k4 = 0.5677124f
+            wl = 4.0767417f; wm = -3.3077116f; ws = 0.23096994f
         }
-        else if (1.81444104f * a - 1.19445276f * b > 1)
+        else if (1.8144411f * a - 1.1944528f * b > 1)
         {
             // Green component
-            k0 = +0.73956515f; k1 = -0.45954404f; k2 = +0.08285427f; k3 = +0.12541070f; k4 = +0.14503204f;
-            wl = -1.2684380046f; wm = +2.6097574011f; ws = -0.3413193965f;
+            k0 = 0.73956513f; k1 = -0.45954403f; k2 = 0.08285427f; k3 = 0.12541070f; k4 = 0.14503203f
+            wl = -1.268438f; wm = 2.6097574f; ws = -0.34131938f
         }
         else
         {
             // Blue component
-            k0 = +1.35733652f; k1 = -0.00915799f; k2 = -1.15130210f; k3 = -0.50559606f; k4 = +0.00692167f;
-            wl = -0.0041960863f; wm = -0.7034186147f; ws = +1.7076147010f;
+            k0 = 1.3573365f; k1 = -0.00915799f; k2 = -1.15130210f; k3 = -0.50559604f; k4 = 0.00692167f
+            wl = -0.0041960864f; wm = -0.7034186f; ws = 1.7076147f
         }
 
         // Approximate max saturation using a polynomial:
-        var S = k0 + k1 * a + k2 * b + k3 * a * a + k4 * a * b;
+        var S = k0 + k1 * a + k2 * b + k3 * a * a + k4 * a * b
 
         // Do one step Halley's method to get closer
         // this gives an error less than 10e6, except for some blue hues where the dS/dh is close to infinite
         // this should be sufficient for most applications, otherwise do two/three steps
 
-        val k_l = +0.3963377774f * a + 0.2158037573f * b;
-        val k_m = -0.1055613458f * a - 0.0638541728f * b;
-        val k_s = -0.0894841775f * a - 1.2914855480f * b;
+        val k_l = +0.39633778f * a + 0.21580376f * b
+        val k_m = -0.105561346f * a - 0.06385417f * b
+        val k_s = -0.08948418f * a - 1.2914855f * b
 
-        val l_ = 1f + S * k_l;
-        val m_ = 1f + S * k_m;
-        val s_ = 1f + S * k_s;
+        val l_ = 1f + S * k_l
+        val m_ = 1f + S * k_m
+        val s_ = 1f + S * k_s
 
-        val l = l_ * l_ * l_;
-        val m = m_ * m_ * m_;
-        val s = s_ * s_ * s_;
+        val l = l_ * l_ * l_
+        val m = m_ * m_ * m_
+        val s = s_ * s_ * s_
 
-        val l_dS = 3f * k_l * l_ * l_;
-        val m_dS = 3f * k_m * m_ * m_;
-        val s_dS = 3f * k_s * s_ * s_;
+        val l_dS = 3f * k_l * l_ * l_
+        val m_dS = 3f * k_m * m_ * m_
+        val s_dS = 3f * k_s * s_ * s_
 
-        val l_dS2 = 6f * k_l * k_l * l_;
-        val m_dS2 = 6f * k_m * k_m * m_;
-        val s_dS2 = 6f * k_s * k_s * s_;
+        val l_dS2 = 6f * k_l * k_l * l_
+        val m_dS2 = 6f * k_m * k_m * m_
+        val s_dS2 = 6f * k_s * k_s * s_
 
-        val f  = wl * l     + wm * m     + ws * s;
-        val f1 = wl * l_dS  + wm * m_dS  + ws * s_dS;
-        val f2 = wl * l_dS2 + wm * m_dS2 + ws * s_dS2;
+        val f  = wl * l     + wm * m     + ws * s
+        val f1 = wl * l_dS  + wm * m_dS  + ws * s_dS
+        val f2 = wl * l_dS2 + wm * m_dS2 + ws * s_dS2
 
-        S = S - f * f1 / (f1*f1 - 0.5f * f * f2);
+        S -= f * f1 / (f1*f1 - 0.5f * f * f2)
 
-        return S;
+        return S
     }
 
     fun findCusp(a: Float, b: Float): Pair<Float, Float> {
         // First, find the maximum saturation (saturation S = C/L)
-        val S_cusp = computeMaxSaturation(a, b);
+        val S_cusp = computeMaxSaturation(a, b)
 
         // Convert to linear sRGB to find the first point where at least one of r,g or b >= 1:
-        val rgb_at_max: Triple<Float, Float, Float> = oklabToLinearSrgb(Triple(1f, S_cusp * a, S_cusp * b));
-        val L_cusp = cbrt(1 / max(max(rgb_at_max.first, rgb_at_max.second), rgb_at_max.third));
-        val C_cusp = L_cusp * S_cusp;
+        val rgb_at_max: Triple<Float, Float, Float> = oklabToLinearSrgb(Triple(1f, S_cusp * a, S_cusp * b))
+        val L_cusp = cbrt(1 / max(max(rgb_at_max.first, rgb_at_max.second), rgb_at_max.third))
+        val C_cusp = L_cusp * S_cusp
 
         return L_cusp to C_cusp
     }
@@ -227,8 +227,8 @@ data class OkhsvColor(
         val rgb_scale: Triple<Float, Float, Float> = OKHSV.oklabToLinearSrgb(Triple(L_vt, a_ * C_vt, b_ * C_vt))
         val scale_L = cbrt(1 / max(max(rgb_scale.first, rgb_scale.second), max(rgb_scale.third, 0f)))
 
-        L = L * scale_L
-        C = C * scale_L
+        L *= scale_L
+        C *= scale_L
 
         val rgb: Triple<Float, Float, Float> = OKHSV.oklabToLinearSrgb(Triple(L, C * a_, C * b_))
         return Color(
@@ -275,8 +275,8 @@ data class OkhsvColor(
             val rgb_scale: Triple<Float, Float, Float> = OKHSV.oklabToLinearSrgb(Triple(L_vt, a_ * C_vt, b_ * C_vt))
             val scale_L = cbrt(1 / max(max(rgb_scale.first, rgb_scale.second), max(rgb_scale.third, 0f)))
 
-            L = L / scale_L
-            C = C / scale_L
+            L /= scale_L
+            C /= scale_L
 
             C = C * OKHSV.toe(L) / L
             L = OKHSV.toe(L)
@@ -287,6 +287,80 @@ data class OkhsvColor(
             val s = (S_0 + T_max) * C_v / ((T_max * S_0) + T_max * k * C_v)
 
             return OkhsvColor(h, s, v)
+        }
+    }
+}
+
+// ─── Color slider component ─────────────────────────────────────────────────
+
+private fun ViewWriter.colorSlider(
+    value: MutableReactive<Double>,
+    gradientStops: Reactive<List<GradientStop>>,
+) {
+    row {
+        sizeConstraints(height = 1.5.rem).expanding.canvas {
+            var currentValue by Signal(0.0)
+            var currentStops by Signal(listOf<GradientStop>())
+
+            val delegate = object : CanvasDelegate() {
+                private var isDragging = false
+
+                private fun update(x: Double, width: Double) {
+                    val newValue = (x / width).coerceIn(0.0, 1.0)
+                    reactiveSuspending {
+                        value.set(newValue)
+                        invalidate()
+                    }
+                }
+
+                override fun onPointerDown(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
+                    isDragging = true; update(x, width); return true
+                }
+                override fun onPointerMove(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
+                    if (isDragging) update(x, width); return true
+                }
+                override fun onPointerUp(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
+                    isDragging = false; return true
+                }
+
+                override fun draw(context: DrawingContext2D) {
+                    val w = context.width; val h = context.height
+
+                    // Draw gradient
+                    context.fillPaint = LinearGradient(
+                        stops = currentStops,
+                        x0 = 0.0, y0 = 0.0, x1 = w, y1 = 0.0,
+                    )
+                    context.fillRect(0.0, 0.0, w, h)
+
+                    // Indicator line
+                    val indicatorX = currentValue * w
+                    context.strokePaint = Color.white
+                    context.lineWidth = 2.0
+                    context.beginPath()
+                    context.moveTo(indicatorX, 0.0)
+                    context.lineTo(indicatorX, h)
+                    context.stroke()
+                    context.strokePaint = Color.black
+                    context.lineWidth = 1.0
+                    context.beginPath()
+                    context.moveTo(indicatorX - 1.0, 0.0)
+                    context.lineTo(indicatorX - 1.0, h)
+                    context.stroke()
+                }
+            }
+            this.delegate = delegate
+            delegate.invalidate = { this.delegate = delegate }
+            reactive {
+                currentValue = value()
+                currentStops = gradientStops()
+                delegate.invalidate()
+            }
+            enablePointerCapture()
+        }
+        sizeConstraints(width = 4.rem).numberInput {
+            keyboardHints = KeyboardHints.decimal
+            content bind value.lens(get = { it }, set = { it ?: 0.0})
         }
     }
 }
@@ -314,175 +388,40 @@ fun ViewWriter.okhsvColorPicker(color: MutableReactive<Color>) {
             }
         }
 
+        val gradientGrit = 8
+
         // Hue slider
-        sizeConstraints(height = 1.5.rem).canvas {
-            val hueDelegate = object : CanvasDelegate() {
-                private var isDragging = false
-
-                private fun update(x: Double, width: Double) {
-                    val h = (x / width).toFloat().coerceIn(0f, 1f)
-
-                    okhsv.value = okhsv.state.raw.copy(hue = h)
-                    invalidate()
+        colorSlider(
+            value = okhsv.lens(get = { it.hue.toDouble() }, set = { okhsv.state.raw.copy(hue = it.toFloat()) }),
+            gradientStops = remember {
+                (0..gradientGrit).map { i ->
+                    val t = i / gradientGrit.toFloat()
+                    GradientStop(t, okhsv().copy(hue = t).toRGB())
                 }
-
-                override fun onPointerDown(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
-                    isDragging = true; update(x, width); return true
-                }
-                override fun onPointerMove(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
-                    if (isDragging) update(x, width); return true
-                }
-                override fun onPointerUp(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
-                    isDragging = false; return true
-                }
-
-                override fun draw(context: DrawingContext2D) {
-                    val w = context.width; val h = context.height
-                    val current = okhsv.state.raw
-                    val stops = (0..12).map { i ->
-                        val t = i / 12f
-                        GradientStop(t, OkhsvColor(t, current.saturation, current.value).toRGB())
-                    }
-                    context.fillPaint = LinearGradient(
-                        stops = stops,
-                        x0 = 0.0, y0 = 0.0, x1 = w, y1 = 0.0,
-                    )
-                    context.fillRect(0.0, 0.0, w, h)
-
-                    // Indicator line
-                    val x = okhsv.state.raw.hue * w
-                    context.strokePaint = Color.white
-                    context.lineWidth = 2.0
-                    context.beginPath()
-                    context.moveTo(x, 0.0)
-                    context.lineTo(x, h)
-                    context.stroke()
-                    context.strokePaint = Color.black
-                    context.lineWidth = 1.0
-                    context.beginPath()
-                    context.moveTo(x - 1.0, 0.0)
-                    context.lineTo(x - 1.0, h)
-                    context.stroke()
-                }
-
-            }
-            this.delegate = hueDelegate
-            hueDelegate.invalidate = { this.delegate = hueDelegate }
-            reactive { okhsv(); hueDelegate.invalidate() }
-            enablePointerCapture()
-        }
+            },
+        )
 
         // Saturation slider
-        sizeConstraints(height = 1.5.rem).canvas {
-            val satDelegate = object : CanvasDelegate() {
-                private var isDragging = false
-
-                private fun update(x: Double, width: Double) {
-                    val s = (x / width).toFloat().coerceIn(0f, 1f)
-                    okhsv.value = okhsv.state.raw.copy(saturation = s)
-                    invalidate()
+        colorSlider(
+            value = okhsv.lens(get = { it.saturation.toDouble() }, set = { okhsv.state.raw.copy(saturation = it.toFloat()) }),
+            gradientStops = remember {
+                (0..gradientGrit).map { i ->
+                    val t = i / gradientGrit.toFloat()
+                    GradientStop(t, okhsv().copy(saturation = t).toRGB())
                 }
-
-                override fun onPointerDown(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
-                    isDragging = true; update(x, width); return true
-                }
-                override fun onPointerMove(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
-                    if (isDragging) update(x, width); return true
-                }
-                override fun onPointerUp(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
-                    isDragging = false; return true
-                }
-
-                override fun draw(context: DrawingContext2D) {
-                    val w = context.width; val h = context.height
-                    val current = okhsv.state.raw
-                    val stops = (0..12).map { i ->
-                        val t = i / 12f
-                        GradientStop(t, OkhsvColor(current.hue, t, current.value).toRGB())
-                    }
-                    context.fillPaint = LinearGradient(
-                        stops = stops,
-                        x0 = 0.0, y0 = 0.0, x1 = w, y1 = 0.0,
-                    )
-                    context.fillRect(0.0, 0.0, w, h)
-
-                    // Indicator line
-                    val x = current.saturation * w
-                    context.strokePaint = Color.white
-                    context.lineWidth = 2.0
-                    context.beginPath()
-                    context.moveTo(x, 0.0)
-                    context.lineTo(x, h)
-                    context.stroke()
-                    context.strokePaint = Color.black
-                    context.lineWidth = 1.0
-                    context.beginPath()
-                    context.moveTo(x - 1.0, 0.0)
-                    context.lineTo(x - 1.0, h)
-                    context.stroke()
-                }
-            }
-            this.delegate = satDelegate
-            satDelegate.invalidate = { this.delegate = satDelegate }
-            reactive { okhsv(); satDelegate.invalidate() }
-            enablePointerCapture()
-        }
+            },
+        )
 
         // Value slider
-        sizeConstraints(height = 1.5.rem).canvas {
-            val valDelegate = object : CanvasDelegate() {
-                private var isDragging = false
-
-                private fun update(x: Double, width: Double) {
-                    val v = (x / width).toFloat().coerceIn(0f, 1f)
-                    okhsv.value = okhsv.state.raw.copy(value = v)
-                    invalidate()
+        colorSlider(
+            value = okhsv.lens(get = { it.value.toDouble() }, set = { okhsv.state.raw.copy(value = it.toFloat()) }),
+            gradientStops = remember {
+                (0..gradientGrit).map { i ->
+                    val t = i / gradientGrit.toFloat()
+                    GradientStop(t, okhsv().copy(value = t).toRGB())
                 }
-
-                override fun onPointerDown(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
-                    isDragging = true; update(x, width); return true
-                }
-                override fun onPointerMove(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
-                    if (isDragging) update(x, width); return true
-                }
-                override fun onPointerUp(id: Int, x: Double, y: Double, width: Double, height: Double): Boolean {
-                    isDragging = false; return true
-                }
-
-                override fun draw(context: DrawingContext2D) {
-                    val w = context.width; val h = context.height
-                    val current = okhsv.state.raw
-                    val stops = (0..12).map { i ->
-                        val t = i / 12f
-                        GradientStop(t, OkhsvColor(current.hue, current.saturation, t).toRGB())
-                    }
-                    context.fillPaint = LinearGradient(
-                        stops = stops,
-                        x0 = 0.0, y0 = 0.0, x1 = w, y1 = 0.0,
-                    )
-                    context.fillRect(0.0, 0.0, w, h)
-
-                    // Indicator line
-                    val x = current.value * w
-                    context.strokePaint = Color.white
-                    context.lineWidth = 2.0
-                    context.beginPath()
-                    context.moveTo(x, 0.0)
-                    context.lineTo(x, h)
-                    context.stroke()
-                    context.strokePaint = Color.black
-                    context.lineWidth = 1.0
-                    context.beginPath()
-                    context.moveTo(x - 1.0, 0.0)
-                    context.lineTo(x - 1.0, h)
-                    context.stroke()
-                }
-            }
-            this.delegate = valDelegate
-            valDelegate.invalidate = { this.delegate = valDelegate }
-            reactive { okhsv(); valDelegate.invalidate() }
-            enablePointerCapture()
-        }
+            },
+        )
 
         // Color swatch + hex display
         row {
